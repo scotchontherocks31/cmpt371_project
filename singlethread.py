@@ -27,7 +27,7 @@ while True:
 
     # Get content of test.html 
     try:
-        file = open('test.html') #might need to modidify 
+        file = open('test.html') #might need to modify 
         content = file.read()
         file.close()
 
