@@ -19,10 +19,10 @@ class ClientThread(threading.Thread):
         print("\nConnection from: ", self.client_addr)
 
         while True:
-            print("\nProducing request: ")
             # request may need further debugging
             try:
                 request = self.client_sock.recv(1024).decode()
+                print("\nProducing request: ")
                 print(request)
             except OSError:
                 break
