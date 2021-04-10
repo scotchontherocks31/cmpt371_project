@@ -1,43 +1,53 @@
-# code goes here, or in multiple places
+import socket
 
-#HOW TO RUN
-#After installing dependecies do python3 shell.py
-#Open up your preferred browser and enter in the search bar: localhost:PORT
-#where PORT is the port used in the PORT variable
-
-
-#Codes given -----
-#200 OK
-#304 Not Modified
-#400 Bad Request
-#404 Not Found
-#408 Request Timed Out 
+# Define server port 
+PORT = 8080 #We can use any port
+SERVER = socket.gethostbyname("localhost") #localhost since mac problems with socket.gethost()
 
 
-#If these aren't installed on your machine, pip install beforehand
-import http.server
-import socketserver
 
-PORT = 8080 #This is just the port i was using, feel free to use any post
+#docs.python.org/3/howto/sockets.html
 
-#Potential User Bug 1: OSError: [Errno 48] Address already in use
-#If this is the case you can either switch ports or what i do is suspend all terminal tasks
-#This will end the terminal tasks and close your ports (also good security)
+# Bind socket to port 
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+server.bind((SERVER, PORT))
+server.listen(1)
+print('Server is listening on port %s ...' % PORT)
 
 
-#We are using a custom class since our file isnt called index.html
-#This class (http.server.SimpleHTTPRequestHandler) also lets us to see if directory specified
-#CGIHTTPRequest allows us to do stuff like POST See documentation for more
-class MyHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.path = 'test.html' #Use test.html instead of finding index.html since if not found displays a tree
-        return http.server.SimpleHTTPRequestHandler.do_GET(self)
+#Handle incoming client request
+while True:    
+    # Wait for client connections
+    client_conn, client_addr = server.accept()
 
-Handler = MyHttpRequestHandler #Make handler our custom class instead of default
+    # Get the client request
+    request = client_conn.recv(1024).decode()
+    print(request)
 
-#To instantiate a TCP server we need the address and handler used, TCP is tuple of ipaddress, port
-#empty string ip -> listen on any network interface
-#PORT -> listen to what port
-with socketserver.TCPServer(("",PORT), Handler) as httpd: 
-    print(f"Running Port is: {PORT} ") #print in terminal (confirm its running)
-    httpd.serve_forever() #Serve_forever allows the server to start and respond to requests
+    # Get content of test.html 
+    try:
+        file = open('test.html') #might need to modidify 
+        content = file.read()
+        file.close()
+
+        response = 'HTTP/1.1 200 OK\n\n' + content
+
+    except FileNotFoundError: #404 Error
+        
+        response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
+
+    except TimeoutError: #if cannot connect
+
+        response = 'HTTP/1.1 408 REQUEST TIME OUT\n\n Request Timed Out'
+
+    #TODO: 304 Not Modified 
+
+    #TODO: 400 Bad request 
+
+    # Send HTTP response 
+    client_conn.sendall(response.encode())
+    client_conn.close()
+
+# Close socket
+server.close()
