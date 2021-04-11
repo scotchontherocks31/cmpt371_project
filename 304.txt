@@ -1,0 +1,18 @@
+304 - Not Modified
+
+If the website has not been modified then we just load the cached version of the website (so we need to see when the file was last updated
+and when the last access was) 
+
+https://stackoverflow.com/questions/4506/how-to-know-when-to-send-a-304-not-modified-response
+https://stackoverflow.com/questions/2611264/httplistener-how-do-i-send-a-webexception-http-304-not-modified-error-back-t
+
+400 - Bad Request
+Cannot understand (like .pdf i presume) 
+
+https://stackoverflow.com/questions/48907705/how-to-handle-400-bad-request-by-urlopen
+
+possibly value error?
+
+
+
+https://2.python-requests.org/en/v3.0.0/_modules/requests/exceptions/
