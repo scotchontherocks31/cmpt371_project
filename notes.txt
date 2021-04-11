@@ -8,6 +8,10 @@ https://stackoverflow.com/questions/22383125/avoiding-304-not-modified-responses
 https://stackoverflow.com/questions/4506/how-to-know-when-to-send-a-304-not-modified-response
 https://stackoverflow.com/questions/2611264/httplistener-how-do-i-send-a-webexception-http-304-not-modified-error-back-t
 
+
+
+**99% sure we have to use if modified since** https://youtu.be/qvr9a5tQR_s?t=147 
+
 400 - Bad Request
 Cannot understand (like .pdf i presume) 
 
