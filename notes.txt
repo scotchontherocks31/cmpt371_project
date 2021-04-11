@@ -12,6 +12,15 @@ https://stackoverflow.com/questions/2611264/httplistener-how-do-i-send-a-webexce
 
 **99% sure we have to use if modified since** https://youtu.be/qvr9a5tQR_s?t=147 
 
+import datetime
+get date and time 
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since
+
+If-Modified-Since: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT:
+  IF TRUE THEN SEND FILES
+ELSE:
+  SEND 304 AND CACHED FILE
+
 400 - Bad Request
 Cannot understand (like .pdf i presume) 
 
