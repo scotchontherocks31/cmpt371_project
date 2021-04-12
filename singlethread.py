@@ -1,53 +1,80 @@
 import socket
+from datetime import datetime
+from pathlib import Path
+import time
 
-# Define server port 
-PORT = 8080 #We can use any port
-SERVER = socket.gethostbyname("localhost") #localhost since mac problems with socket.gethost()
+#specify server address
+PORT = 8080
+SERVER = socket.gethostbyname("localhost")
 
-
-
-#docs.python.org/3/howto/sockets.html
-
-# Bind socket to port 
+#create TCP welcoming socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+#Bind the server port to the socket
 server.bind((SERVER, PORT))
+
+#server begins listerning foor incoming TCP connections
 server.listen(1)
-print('Server is listening on port %s ...' % PORT)
+print(f"Server is listening on port {PORT}")
 
+# set the waitUntilTimeout---->(alterable)
+waitUntilTimeOut = 10000
 
-#Handle incoming client request
-while True:    
-    # Wait for client connections
+modify = 0 
+while True:
+    beginTime = time.time()
+    #server waits on accept for incoming requests.
+    #New socket created on return
     client_conn, client_addr = server.accept()
 
-    # Get the client request
-    request = client_conn.recv(1024).decode()
-    print(request)
-
-    # Get content of test.html 
-    try:
-        file = open('test.html') #might need to modify 
-        content = file.read()
-        file.close()
-
-        response = 'HTTP/1.1 200 OK\n\n' + content
-
-    except FileNotFoundError: #404 Error
+    # 408 Request Time Out
+    if time.time() - beginTime > waitUntilTimeOut:
+        response = 'HTTP/1.1 408 REQUEST TIMED OUT\n\n'
+    else:    
+   
+        #Read from socket
+        request = client_conn.recv(1024).decode('utf-8')
+        string_list = request.split(' ')     # Split request from spaces
         
-        response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
 
-    except TimeoutError: #if cannot connect
+        if 'GET' in string_list:
+            method = string_list[0]
+            #print(string_list)
+            requesting_file = string_list[1]
+            print('Client request ',requesting_file)
+            myfile = requesting_file.split('?')[0] # After the "?" symbol not relevent here
+            myfile = myfile.strip('/')
+            if(myfile == ''):
+                myfile = 'test.html'
 
-        response = 'HTTP/1.1 408 REQUEST TIME OUT\n\n Request Timed Out'
+            try:
+                myfilePath = Path(myfile)
+                file = open(myfile)
+                content = file.read()
+                file.close()
 
-    #TODO: 304 Not Modified 
+                # if(modify == 0):
+                #     modify = myfilePath.stat().st_mtime
+                
+                # if(modify == myfilePath.stat().st_mtime):
+                #     response = 'HTTP/1.1 200 OK\n\n' + content
+                
+                response = 'HTTP/1.1 200 OK\n\n' + content
 
-    #TODO: 400 Bad request 
+                # else:
+                #     modify = myfilePath.stat().st_mtime
+                #     response = 'HTTP/1.1 304 Not Modified\n\n' + content
 
-    # Send HTTP response 
-    client_conn.sendall(response.encode())
-    client_conn.close()
+            except FileNotFoundError:
+                response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
 
-# Close socket
+        #400 Bad Request
+        else:
+            response = 'HTTP/1.1 400 BAD REQUEST\n\n' 
+
+        print(request)
+        client_conn.sendall(response.encode())
+        client_conn.close()
+
+    
 server.close()
