@@ -53,17 +53,17 @@ while True:
                 content = file.read()
                 file.close()
 
-                # if(modify == 0):
-                #     modify = myfilePath.stat().st_mtime
+                if(modify == 0):
+                    modify = myfilePath.stat().st_mtime
                 
-                # if(modify == myfilePath.stat().st_mtime):
-                #     response = 'HTTP/1.1 200 OK\n\n' + content
+                if(modify == myfilePath.stat().st_mtime):
+                    response = 'HTTP/1.1 200 OK\n\n' + content
                 
-                response = 'HTTP/1.1 200 OK\n\n' + content
+                #response = 'HTTP/1.1 200 OK\n\n' + content
 
-                # else:
-                #     modify = myfilePath.stat().st_mtime
-                #     response = 'HTTP/1.1 304 Not Modified\n\n' + content
+                else:
+                    modify = myfilePath.stat().st_mtime
+                    response = 'HTTP/1.1 304 NOT MODIFIED\n\n' + content
 
             except FileNotFoundError:
                 response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
