@@ -42,7 +42,7 @@ while True:
             #print(string_list)
             requesting_file = string_list[1]
             print('Client request ',requesting_file)
-            myfile = requesting_file.split('?')[0] # After the "?" symbol not relevent here
+            myfile = requesting_file.split('?')[0] 
             myfile = myfile.strip('/')
             if(myfile == ''):
                 myfile = 'test.html'
@@ -52,14 +52,10 @@ while True:
                 file = open(myfile)
                 content = file.read()
                 file.close()
-                #print(modify)
-                #print(myfilePath.stat().st_mtime)
                 if(modify != myfilePath.stat().st_mtime):
                     modify = myfilePath.stat().st_mtime
                     response = 'HTTP/1.1 200 OK\n\n' + content
                 
-                #response = 'HTTP/1.1 200 OK\n\n' + content
-
                 else:
                     response = 'HTTP/1.1 304 NOT MODIFIED\n\n' + content
 
