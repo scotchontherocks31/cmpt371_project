@@ -59,7 +59,7 @@ while True:
                 
                 else:
                     response = 'HTTP/1.1 304 NOT MODIFIED\n\n' + content
-                    print("300 NOT MODIFIED")
+                    print("304 NOT MODIFIED")
 
             except FileNotFoundError:
                 response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
