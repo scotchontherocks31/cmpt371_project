@@ -55,16 +55,20 @@ while True:
                 if(modify != myfilePath.stat().st_mtime):
                     modify = myfilePath.stat().st_mtime
                     response = 'HTTP/1.1 200 OK\n\n' + content
+                    print("200 OK")
                 
                 else:
                     response = 'HTTP/1.1 304 NOT MODIFIED\n\n' + content
+                    print("300 NOT MODIFIED")
 
             except FileNotFoundError:
                 response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
+                print("404 NOT FOUND")
 
         #400 Bad Request
         else:
-            response = 'HTTP/1.1 400 BAD REQUEST\n\n' 
+            response = 'HTTP/1.1 400 BAD REQUEST\n\n'
+            print("400 BAD REQUEST") 
 
         print(request)
         client_conn.sendall(response.encode())
