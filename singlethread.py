@@ -18,7 +18,7 @@ server.listen(1)
 print(f"Server is listening on port {PORT}")
 
 # set the waitUntilTimeout---->(alterable)
-waitUntilTimeOut = 10000
+waitUntilTimeOut = 10000  # Original set value: 10000
 
 modify = 0 
 while True:
@@ -29,13 +29,13 @@ while True:
 
     # 408 Request Time Out
     if time.time() - beginTime > waitUntilTimeOut:
+        request = client_conn.recv(1024).decode('utf-8')
         response = 'HTTP/1.1 408 REQUEST TIMED OUT\n\n'
     else:    
    
         #Read from socket
         request = client_conn.recv(1024).decode('utf-8')
         string_list = request.split(' ')     # Split request from spaces
-        
 
         if 'GET' in string_list:
             method = string_list[0]
