@@ -10,6 +10,7 @@ PORT = 8080
 CWD = os.getcwd()
 PRINT_LOCK = threading.Lock()
 time_limit = 10000  # Original set value: 10000
+dir = os.getcwd()
 
 class ClientThread(threading.Thread):
     def __init__(self, client_addr, client_sock, time):
@@ -62,13 +63,25 @@ class ClientThread(threading.Thread):
                         contents = file.read()
                         file.close()
 
-                        # OK 200 / ERROR 304 CHECK
-                        if(self.MODIFY_CHECK != myfile_path.stat().st_mtime):
-                            self.MODIFY_CHECK = myfile_path.stat().st_mtime
-                            response = 'HTTP/1.1 200 OK\n\n' + contents
+                        time_file = Path(dir + "/time.txt")
+                        if time_file.exists():
+                            f = open(time_file, "r")
+                            time_check = f.read()
+                            f.close()
+
+                            if time_check != str(myfile_path.stat().st_mtime):
+                                f = open(time_file, "w")
+                                f.write(str(myfile_path.stat().st_mtime))
+                                f.close()
+                                response = 'HTTP/1.1 200 OK\n\n' + contents
+                            else:
+                                os.remove(time_file)    #uncomment this for repeated 304 error
+                                response = 'HTTP/1.1 304 NOT MODIFIED\n\n'
                         else:
-                            response = 'HTTP/1.1 304 NOT MODIFIED\n\n' + contents
-                        
+                            f = open(time_file, "w")
+                            f.write(str(myfile_path.stat().st_mtime))
+                            f.close()
+                            response = 'HTTP/1.1 200 OK\n\n' + contents
                     except FileNotFoundError:
                         response = 'HTTP/1.1 404 NOT FOUND\n\n File Not Found'
                 else: # 'GET' not fount
